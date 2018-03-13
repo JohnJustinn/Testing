@@ -14,11 +14,11 @@ const values = (obj) => {
 };
 
 const mapObject = (obj, cb) => {
-  Object.keys(obj).forEach((key) => (obj[key] = cb(obj[key])));
+  Object.keys(obj).forEach(key => (obj[key] = cb(obj[key])));
   return obj;
 };
 
-const pairs = (obj) => Object.keys(obj).map((key) => [key, obj[key]]);
+const pairs = obj => Object.keys(obj).map(key => [key, obj[key]]);
 
 const invert = (obj) => {
   Object.keys(obj).forEach((key) => {
