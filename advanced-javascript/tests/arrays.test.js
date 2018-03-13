@@ -14,7 +14,7 @@ chai.use(sinonChai);
 // then make sure you have at least 2-3 more assertions for every function.
 // hint 1. - you need to pass data to the functions and get expected output.
 // hint 2. - you should test the data type being called back, and perform some sort of operation on the data.
-// hint 3. - if the function you're testing requires a * callback *, make sure you use a spy like sinon
+// hint 3. - if the function you're testing requires a * cb *, make sure you use a spy like sinon
 
 describe('Arrays', () => {
   let testArray = [];
@@ -30,7 +30,7 @@ describe('Arrays', () => {
       const each = arrayFunctions.each;
       expect(each).to.be.a('function');
     });
-    it('Should be a callback for items in array'), () => {
+    it('Should be a cb for items in array'), () => {
       const spy = sinon.spy();
       const callTimes = testArray.length;
       arrayFunctions.each(testArray, spy);
@@ -40,11 +40,11 @@ describe('Arrays', () => {
 
   describe('`map`', () => {
     const map = arrayFunctions.map;
+    const cb = sinon.spy();
     it('should be a function', () => {
       expect(map).to.be.an('function');
     });
-    it('Should expect a callback', () => {
-      const cb = sinon.spy();
+    it('Should expect a cb', () => {
       const callTimes = testArray.length;
       arrayFunctions.map(testArray, cb);
       expect(cb).to.have.callCount(callTimes);
@@ -58,35 +58,75 @@ describe('Arrays', () => {
 
   describe('`reduce`', () => {
     const reduce = arrayFunctions.reduce;
+    const cb = sinon.spy();
+
     it('should be a function', () => {
       expect(reduce).to.be.a('function');
     });
-    it('Should expect a callback', () => {
-      const cb = sinon.spy();
-      const callTimes = testArray.length;
-      arrayFunctions.reduce(testArray, cb);
-      expect(cb).to.have.callCount(callTimes);
+
+    it('Should expect a cb', () => {
+      const reducedArray = reduce(testArray, cb);
+      expect(cb).to.have.callCount(testArray.length);
+    });
+    it('Should return a correct sum using reduce', () => {
+      const sumArray = reduce([1, 2, 3, 4, 5], (a, b) => a + b);
+      expect(sumArray).to.be.a('number');
+      expect(sumArray).to.equal(15);
     });
   });
 
   describe('`find`', () => {
+    const find = arrayFunctions.find;
+
     it('should be a function', () => {
-      const find = arrayFunctions.find;
       expect(find).to.be.an('function');
+    });
+    it('Should find the item for which is being searched', () => {
+      const cb = (element) => {
+        return element === 'hot' ? element : undefined;
+      };
+      const thisElement = find([1, 2, 'hot', 'cold'], cb);
+      expect(thisElement).to.equal('hot');
+    });
+    it('Should return item same type for which is being searched', () => {
+      const cb = (element) => {
+        return element === 'near' ? element : undefined;
+      };
+      const thisElement = find([1, 2, 3, 'near', 'far'], cb);
+      expect(thisElement).to.be.a('string');
     });
   });
 
   describe('`filter`', () => {
+    const filter = arrayFunctions.filter;
+
     it('should be a function', () => {
-      const filter = arrayFunctions.filter;
       expect(filter).to.be.a('function');
+    });
+    it('Should return items that have been filtered', () => {
+      const cb = (element) => { return element > 25; };
+      const filteredArray = filter([10, 200, 5, 24, 30], cb);
+      expect(filteredArray).to.eql([200, 30]);
+    });
+    it('Should return an array', () => {
+      const cb = (element) => { return element > 1; };
+      const filteredArray = filter([1, 2, 3, 4, 5], cb);
+      expect(filteredArray).to.be.an('array');
     });
   });
 
   describe('`flatten`', () => {
+    const flatten = arrayFunctions.flatten;
     it('should be a function', () => {
-      const flatten = arrayFunctions.flatten;
       expect(flatten).to.be.a('function');
+    });
+    it('Should flatten a nested array', () => {
+      const flattenArray = flatten([1, 2, [3, [4]]]);
+      expect(flattenArray).to.eql([1, 2, 3, 4]);
+    });
+    it('Should return an array', () => {
+      const flattenArray = flatten([1, 2, [3, [4]]]);
+      expect(flattenArray).to.be.an('array');
     });
   });
 });
